@@ -14,6 +14,8 @@ class _app_shell(object):
         self.__duration=2
         self.__report_dir = 'D:\\COM_DOC\\robotframwork\\results\\report'
         self.__appPackage = os.getenv('G_APPIUM_APP_PACKAGE')
+        self.__activity = os.getenv('U_APPIUM_APPACTIVITY')
+        self.content=''
 
     def __raiseError(self, Message=None):
         # Raise Exception with self-defined message.
@@ -206,6 +208,11 @@ class _app_shell(object):
         except Exception, e:
             print str(e)
     def top(self,duration=None):
+        """
+        Get top info through ADB top command.
+        Examples:
+        | top | ${duration}|
+        """
         filename = os.path.join(self.__report_dir, os.getenv('U_TOP_LOG_NAME'))
         # filename="d:\\1.txt"
         print filename
@@ -220,6 +227,11 @@ class _app_shell(object):
             print str(e)
 
     def meminfo(self, package=None):
+        """
+        Get dumpsys meminfo through ADB top command.
+        Examples:
+        | meminfo | ${package}(option)|
+        """
         filename = os.path.join(self.__report_dir, os.getenv('U_MEMINFO_LOG_NAME'))
         if package is None:
             package = self.__appPackage
@@ -230,6 +242,64 @@ class _app_shell(object):
         except Exception as e:
             print str(e)
 
-if __name__=="__main__":
-    xx=_app_shell()
-    xx.top(2)
+    def iscrash(self,package=None):
+        """
+        Check tvuanywehre package is running.
+        Examples:
+        | ${iscrash} | iscrash | ${package}(option)|
+        """
+        iscrash=0
+        if package is None:
+            package = self.__appPackage
+        cmd = 'start /b adb shell ps |findstr {}'.format(package)
+        print cmd
+        try:
+            result=os.popen(cmd)
+            print 'result:',result
+            if(result==''):
+                iscrash=1
+            else:
+                iscrash=0
+        except Exception as e:
+            print str(e)
+        return iscrash
+
+    #start app
+    def LaunchApp(self,package=None,activity=None):
+        """
+        adb start app .
+        Examples:
+        ${startTime}|LaunchApp | ${package}(option)|${activity}(option)|
+        """
+        if package is None:
+            package = self.__appPackage
+        if activity is None:
+            activity=self.__activity
+        cmd = 'start /b adb shell am start -W -n {}/{}'.format(package, activity)
+        print cmd
+        try:
+            content = os.popen(cmd)
+            for line in content.readlines():
+                if "ThisTime" in line:
+                    startTime = line.split(":")[1]
+                    print "startTime:",startTime
+                    break
+        except Exception as e:
+            print str(e)
+        return startTime
+
+    # #get launched time
+    # def getLaunchedTime(self):
+    #     """
+    #     adb start app .
+    #     Examples:
+    #     |${startTime}|getLaunchedTime |
+    #     """
+    #
+    #     return startTime
+
+#
+# if __name__=="__main__":
+#     xx=_app_shell()
+#     re=xx.iscrash('com.tvunetworks.android.anywhere')
+#     print(re)
