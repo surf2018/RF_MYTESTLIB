@@ -20,13 +20,6 @@ class _downloadApk(object):
         self.__apkName= os.getenv('U_APP_ApkName')
         self.__ftp_file_path = os.getenv('G_FTPFILEPATH')
         self.__dst_file_path = os.getenv('G_APPIUM_APP_DIR')
-        # self.__host = '10.12.32.163'
-        # self.__port='21'
-        # self.__username = 'ftpuser'
-        # self.__password = 'tvu123admin'
-        # self.__apkName= 'TVUAnywhere_V8.0.9.290_2001101334_release.apk'
-        # self.__ftp_file_path = '/AnywhereShare/android_release/anywhere/'
-        # self.__dst_file_path = 'D:\\AutoTest\\androidApk\\'
 
     def ftp_connect(self,host,user,pwd):
         """
